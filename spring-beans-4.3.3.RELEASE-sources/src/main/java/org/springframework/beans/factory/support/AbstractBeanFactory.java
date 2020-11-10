@@ -110,6 +110,7 @@ import org.springframework.util.StringValueResolver;
  * @see AbstractAutowireCapableBeanFactory#createBean
  * @see DefaultListableBeanFactory#getBeanDefinition
  */
+// 20201110 AbstractBeanFactory -> 提供单例缓存
 public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport implements ConfigurableBeanFactory {
 
 	/** Parent bean factory, for bean inheritance support */
@@ -232,6 +233,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 	 * @throws BeansException if the bean could not be created
 	 */
 	@SuppressWarnings("unchecked")
+	// 20201110
 	protected <T> T doGetBean(
 			final String name, final Class<T> requiredType, final Object[] args, boolean typeCheckOnly)
 			throws BeansException {
@@ -240,8 +242,8 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 		Object bean;
 
 		// Eagerly check singleton cache for manually registered singletons.
-		Object sharedInstance = getSingleton(beanName);
-		if (sharedInstance != null && args == null) {
+		Object sharedInstance = getSingleton(beanName);// 20201110 获取单例对象
+		if (sharedInstance != null && args == null) {// 20201110 参数为空时
 			if (logger.isDebugEnabled()) {
 				if (isSingletonCurrentlyInCreation(beanName)) {
 					logger.debug("Returning eagerly cached instance of singleton bean '" + beanName +
@@ -251,10 +253,11 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 					logger.debug("Returning cached instance of singleton bean '" + beanName + "'");
 				}
 			}
+			// 20201110 获取给定bean实例的对象
 			bean = getObjectForBeanInstance(sharedInstance, name, beanName, null);
 		}
 
-		else {
+		else {// 20201110 如果Bean已经创建, 则可以循环利用
 			// Fail if we're already creating this bean instance:
 			// We're assumably within a circular reference.
 			if (isPrototypeCurrentlyInCreation(beanName)) {
@@ -1204,6 +1207,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 	 * @return a (potentially merged) RootBeanDefinition for the given bean
 	 * @throws BeanDefinitionStoreException in case of an invalid bean definition
 	 */
+	// 20201110 取得Bean的定义
 	protected RootBeanDefinition getMergedBeanDefinition(
 			String beanName, BeanDefinition bd, BeanDefinition containingBd)
 			throws BeanDefinitionStoreException {
@@ -1570,23 +1574,25 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 	 * @param mbd the merged bean definition
 	 * @return the object to expose for the bean
 	 */
+	// 20201110 获取给定bean实例的对象, 如果是FactoryBean, 则为bean实例本身或其创建的对象
 	protected Object getObjectForBeanInstance(
 			Object beanInstance, String name, String beanName, RootBeanDefinition mbd) {
 
 		// Don't let calling code try to dereference the factory if the bean isn't a factory.
 		if (BeanFactoryUtils.isFactoryDereference(name) && !(beanInstance instanceof FactoryBean)) {
-			throw new BeanIsNotAFactoryException(transformedBeanName(name), beanInstance.getClass());
+			throw new BeanIsNotAFactoryException(transformedBeanName(name), beanInstance.getClass());// 20201110 bean需要属于符合当前工厂
 		}
 
 		// Now we have the bean instance, which may be a normal bean or a FactoryBean.
 		// If it's a FactoryBean, we use it to create a bean instance, unless the
 		// caller actually wants a reference to the factory.
-		if (!(beanInstance instanceof FactoryBean) || BeanFactoryUtils.isFactoryDereference(name)) {
+		if (!(beanInstance instanceof FactoryBean) || BeanFactoryUtils.isFactoryDereference(name)) {// 20201110 bean需要属于符合当前工厂
 			return beanInstance;
 		}
 
 		Object object = null;
 		if (mbd == null) {
+			// 20201110 从缓存获取Bean实例
 			object = getCachedObjectForFactoryBean(beanName);
 		}
 		if (object == null) {
@@ -1594,10 +1600,11 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 			FactoryBean<?> factory = (FactoryBean<?>) beanInstance;
 			// Caches object obtained from FactoryBean if it is a singleton.
 			if (mbd == null && containsBeanDefinition(beanName)) {
+				// 20201110 缓存没有实例, 则获取Bean的定义
 				mbd = getMergedLocalBeanDefinition(beanName);
 			}
 			boolean synthetic = (mbd != null && mbd.isSynthetic());
-			object = getObjectFromFactoryBean(factory, beanName, !synthetic);
+			object = getObjectFromFactoryBean(factory, beanName, !synthetic);// 20201110 根据Bean定义获取Bean对象
 		}
 		return object;
 	}
