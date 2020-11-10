@@ -16,5 +16,6 @@
         <module name="spring-web-socket-4.3.3.RELEASE-sources" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel target="7" />
   </component>
 </project>
