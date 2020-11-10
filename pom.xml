@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.jsonyao.cs</groupId>
+    <artifactId>my-spring-4-source</artifactId>
+    <packaging>pom</packaging>
+    <version>1.0-SNAPSHOT</version>
+    <modules>
+        <module>commons-logging-1.2-sources</module>
+        <module>spring-aop-4.3.3.RELEASE-sources</module>
+        <module>spring-beans-4.3.3.RELEASE-sources</module>
+        <module>spring-context-4.3.3.RELEASE-sources</module>
+        <module>spring-core-4.3.3.RELEASE-sources</module>
+        <module>spring-expression-4.3.3.RELEASE-sources</module>
+        <module>spring-web-4.3.3.RELEASE-sources</module>
+        <module>spring-web-socket-4.3.3.RELEASE-sources</module>
+    </modules>
+
+    <dependencies>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-websocket</artifactId>
+            <version>4.3.3.RELEASE</version>
+        </dependency>
+
+    </dependencies>
+
+</project>
